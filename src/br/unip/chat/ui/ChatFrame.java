@@ -1,8 +1,8 @@
-package aps.chat.ui;
+package br.unip.chat.ui;
 
-import aps.chat.networking.Client;
-import aps.chat.networking.Message;
-import aps.chat.networking.Screen;
+import br.unip.chat.networking.Client;
+import br.unip.chat.networking.Message;
+import br.unip.chat.networking.Screen;
 import java.awt.Frame;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;

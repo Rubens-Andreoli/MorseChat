@@ -1,4 +1,4 @@
-package aps.chat.ui;
+package br.unip.chat.ui;
 
 import java.awt.Frame;
 
@@ -17,7 +17,7 @@ public class AboutDialog extends javax.swing.JDialog {
         setModalityType(java.awt.Dialog.ModalityType.APPLICATION_MODAL);
         setResizable(false);
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/aps/chat/ui/img/logo_small.png"))); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/unip/chat/ui/img/logo_small.png"))); // NOI18N
 
         jTextArea1.setEditable(false);
         jTextArea1.setBackground(new java.awt.Color(240, 240, 240));

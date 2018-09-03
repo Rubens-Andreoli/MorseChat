@@ -1,6 +1,6 @@
-package aps.chat.networking;
+package br.unip.chat.networking;
 
-import static aps.chat.networking.Server.SERVER_ID;
+import static br.unip.chat.networking.Server.SERVER_ID;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;

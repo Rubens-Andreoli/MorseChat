@@ -1,4 +1,4 @@
-package aps.chat.networking;
+package br.unip.chat.networking;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

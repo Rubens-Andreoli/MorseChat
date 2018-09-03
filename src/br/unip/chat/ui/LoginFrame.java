@@ -1,7 +1,7 @@
-package aps.chat.ui;
+package br.unip.chat.ui;
 
-import aps.chat.networking.Client;
-import aps.chat.networking.Server;
+import br.unip.chat.networking.Client;
+import br.unip.chat.networking.Server;
 import java.io.IOException;
 import javax.swing.JOptionPane;
 
@@ -71,7 +71,7 @@ public class LoginFrame extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/aps/chat/ui/img/logo_small.png"))); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/unip/chat/ui/img/logo_small.png"))); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

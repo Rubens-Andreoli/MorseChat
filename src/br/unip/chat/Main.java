@@ -1,6 +1,6 @@
-package aps.chat;
+package br.unip.chat;
 
-import aps.chat.ui.LoginFrame;
+import br.unip.chat.ui.LoginFrame;
 
 
 public class Main {
