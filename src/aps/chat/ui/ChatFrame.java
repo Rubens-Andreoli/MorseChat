@@ -9,11 +9,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.Sequence;
-import javax.sound.midi.Sequencer;
-import javax.sound.midi.Track;
 
 public class ChatFrame extends javax.swing.JFrame implements Screen{
   
@@ -135,14 +131,12 @@ public class ChatFrame extends javax.swing.JFrame implements Screen{
     }// </editor-fold>//GEN-END:initComponents
 
     private void mntMorseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mntMorseActionPerformed
-        if(!isMorseOpen){
-	    new MorseDialog(this).setVisible(true);
-	    isMorseOpen = true;
-	}
+        if(!morseDialog.isVisible()){ morseDialog.setVisible(true);
+	}else morseDialog.requestFocus();
     }//GEN-LAST:event_mntMorseActionPerformed
 
     private void mntAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mntAboutActionPerformed
-        new AboutDialog(this).setVisible(true);
+        aboutDialog.setVisible(true);
     }//GEN-LAST:event_mntAboutActionPerformed
 
     private void btnSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendActionPerformed
@@ -175,57 +169,41 @@ public class ChatFrame extends javax.swing.JFrame implements Screen{
     // End of variables declaration//GEN-END:variables
     
     private final Client client;
-    private boolean isMorseOpen;
-    private boolean isConnected;
-    
-    private Sequencer sequencer;
-    private Sequence sequence;
-    private Track track;
-    
+    private MorseDialog morseDialog;
+    private AboutDialog aboutDialog;
+
     public ChatFrame(Frame parent, Client client){
-	initComponents();
 	this.client = client;
+	initComponents();
 	config(parent);
     }
 
     private void config(Frame parent) {
 	this.setLocationRelativeTo(parent);
 	this.setTitle("Morse Code Chat - ["+client.getUsername()+"]");
-
+	morseDialog = new MorseDialog(this);
+	aboutDialog = new AboutDialog(this);
+	
 	this.addWindowListener(new WindowAdapter() {
 	    @Override
 	    public void windowClosing(WindowEvent e) {
-		if(isConnected) client.disconnect();
 		parent.setVisible(true);
 	    }
 	});
 	
 	this.setVisible(true);
 	txtMsg.requestFocus();
-        
-        try {
-	    client.connect(this);
-            isConnected = true;
-	} catch (IOException ex) {
-            txaHistory.append("Erro ao conectar o servidor.\n");
-	}
-        
-        try {
-	    sequencer = MidiSystem.getSequencer();
-	    sequencer.open();
-	    sequence = new Sequence(Sequence.PPQ, 4);
+
+	client.run(this);
+	try {
+	    client.startSound();
 	} catch (MidiUnavailableException | InvalidMidiDataException ex) {
 	    mntSound.setSelected(false);
 	    mntSound.setEnabled(false);
 	}
     }
-    
-    public void resetMorseGuide(){
-	isMorseOpen = false;
-    }
-    
+
     private void send() {
-	if(!isConnected) return;
         if(!txtMsg.getText().isEmpty()){
 	    try {
 		client.send(txtMsg.getText().toLowerCase().trim());
@@ -245,17 +223,13 @@ public class ChatFrame extends javax.swing.JFrame implements Screen{
     public void printMessage(Message msg) {
 	txaHistory.append(msg.getHour()+" - "+msg.getUser()+": "+msg.getText()+"\n");
 	if(msg.isMorse() && mntSound.isSelected()){
-	    sequencer.stop();
-	    sequencer.setTickPosition(0);
-	    sequencer.setTempoInBPM(240);
-	    sequence.deleteTrack(track);
-	    track = sequence.createTrack();
-	    msg.play(track);
+	    client.resetSound();
+	    msg.createSound(client.getSoundTrack());
 	    try {
-		sequencer.setSequence(sequence);
-		sequencer.start(); 
-	    } catch (InvalidMidiDataException ex) {} 
+		client.playSound();
+	    } catch (InvalidMidiDataException ex) {
+		//ERRO: Som não pode ser reproduzido.
+	    }
 	}
     }
-
 }

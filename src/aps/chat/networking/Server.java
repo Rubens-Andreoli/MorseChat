@@ -10,27 +10,44 @@ import java.util.List;
 
 public class Server implements Runnable{
 
-    public static final String SERVER_ID = "SERVER";
+    public static final String SERVER_ID = "S.E.R.V.E.R";
     
-    private final int port;
+    private int port;
     private ServerSocket ss;
     private Socket s;
     private List<ObjectOutputStream> clients;
+    private boolean running;
     
     public Server(int port){
-	this.port = port;
 	clients = new ArrayList<>();
+	this.port = port;
+    }
+    
+    public void connect() throws IOException {
+	ss = new ServerSocket(port);
     }
 
     @Override
     public void run() {
+	running = true;
 	try {
-	    ss = new ServerSocket(port);  
-	    while((s = ss.accept()) != null){
+	    while(running && (s = ss.accept()) != null){
 		new Thread(new ClientListener(s)).start();
 	    }
 	} catch (IOException ex) {
-	    //ERRO: ServerSocket não inicializado.
+	    //ERRO: Não foi possível aceitar conexão do cliente.
+	}
+    }
+    
+    public void stop() {
+	if(!running) return;
+	running = false;
+	try {
+	    send(new Message(SERVER_ID, "Servidor desconectado."));
+	    ss.close();
+	    clients.clear();
+	} catch (IOException ex) {
+	    //ERRO: ServerSocket não pode ser fechado.
 	}
     }
     
@@ -43,7 +60,11 @@ public class Server implements Runnable{
 	    }
 	}
     }
-    
+
+    public boolean isRunning() {
+	return running;
+    }
+ 
     private class ClientListener implements Runnable{
 
 	private ObjectOutputStream out;
@@ -71,9 +92,7 @@ public class Server implements Runnable{
 			    clients.remove(out);
 			    send(new Message(SERVER_ID, msg.getUser()+" saiu da sala."));
 			} 
-		    }else{
-			send(msg);
-		    }
+		    }else send(msg);
 		}
 	    } catch (IOException ex) {
 		//ERRO: Não foi possível accessar a input stream do cliente.

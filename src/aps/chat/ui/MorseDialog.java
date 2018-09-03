@@ -1,7 +1,6 @@
 package aps.chat.ui;
 
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.Frame;
 
 public class MorseDialog extends javax.swing.JDialog {
 
@@ -30,29 +29,28 @@ public class MorseDialog extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 464, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 555, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public MorseDialog(ChatFrame parent) {
-	super(parent);
-	initComponents();
-	config(parent);
-    }
-    
-    private void config(ChatFrame parent) {
-	this.setLocationRelativeTo(parent);
-	this.addWindowListener(new WindowAdapter() {
-	    @Override
-	    public void windowClosing(WindowEvent e) {
-		parent.resetMorseGuide();
-	    }
-	});
-    }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
+
+    private final Frame parent;
+    
+    public MorseDialog(Frame parent) {
+	super(parent);
+	this.parent = parent;
+	initComponents();
+    }
+
+    @Override
+    public void setVisible(boolean b) {
+	this.setLocationRelativeTo(parent);
+	super.setVisible(b);
+    }
+ 
 }

@@ -2,6 +2,7 @@ package aps.chat;
 
 import aps.chat.ui.LoginFrame;
 
+
 public class Main {
 
     public static void main(String args[]) {

@@ -2,6 +2,8 @@ package aps.chat.ui;
 
 import aps.chat.networking.Client;
 import aps.chat.networking.Server;
+import java.io.IOException;
+import javax.swing.JOptionPane;
 
 public class LoginFrame extends javax.swing.JFrame {
 
@@ -50,7 +52,7 @@ public class LoginFrame extends javax.swing.JFrame {
 
         lblPort.setText("Port:");
 
-        txtPort.setToolTipText("1000 to 65535");
+        txtPort.setToolTipText("1025 to 65535");
         txtPort.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtPortKeyReleased(evt);
@@ -167,20 +169,32 @@ public class LoginFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_txtPortKeyReleased
 
     private void btnStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStartActionPerformed
-        if(chbIsServer.isSelected()){
-	    new Thread(new Server(Integer.parseInt(txtPort.getText()))).start();
-	    new ChatFrame(this, new Client(
-		    txtName.getText(),
-		    "localhost", 
-		    Integer.parseInt(txtPort.getText())) 
-	    );
-	}else{
-	    new ChatFrame(this, new Client(
-		    txtName.getText(), 
-		    txtIP.getText(),
-		    Integer.parseInt(txtPort.getText()))
-	    );
+	String ip = txtIP.getText();
+	String user = txtName.getText();
+	int port = Integer.parseInt(txtPort.getText());
+
+	if(chbIsServer.isSelected()){
+	    server = new Server(port);
+	    try {
+		server.connect();
+		new Thread(server).start();
+		ip = "localhost";
+	    } catch (IOException ex) {
+		JOptionPane.showMessageDialog(this, "Servidor não pode ser inicializado!");
+		return;
+	    }
 	}
+	
+	client = new Client(user, ip, port);
+	try {
+	    client.connect();
+	    new ChatFrame(this, client);
+	} catch (IOException ex) {
+	    client.disconnect();
+	    JOptionPane.showMessageDialog(this, "Servidor não encontrado!");
+	    return;
+	}
+
 	this.dispose();
     }//GEN-LAST:event_btnStartActionPerformed
 
@@ -203,15 +217,14 @@ public class LoginFrame extends javax.swing.JFrame {
 					    "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
 					    "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
     
+    private Server server;
+    private Client client;
+    
     public LoginFrame() {
 	initComponents();
-	config();
-    }
-    
-    private void config() {
 	this.setLocationRelativeTo(null);
     }
-    
+
     private void ValidateFields() {
 	btnStart.setEnabled(validateName() && validatePort() &&
 		(!chbIsServer.isSelected()? validateIP() : true));
@@ -225,7 +238,7 @@ public class LoginFrame extends javax.swing.JFrame {
 	if(txtPort.getText().isEmpty()) return false;
 	try{
 	    int port = Integer.parseInt(txtPort.getText());
-	    return port >= 1000 && port <= 65535;
+	    return port >= 1024 && port <= 65535;
 	}catch(Exception e){
 	    return false;
 	}
@@ -233,6 +246,15 @@ public class LoginFrame extends javax.swing.JFrame {
     
     private boolean validateIP() {
 	if(txtIP.getText().isEmpty()) return false;
-	return txtIP.getText().matches(IP4_REGEX);
+	return (txtIP.getText().matches(IP4_REGEX) || txtIP.getText().equals("localhost"));
     }
+
+    @Override
+    public void setVisible(boolean b) {
+	super.setVisible(b);
+	if(server != null) server.stop();
+	if(client != null) client.disconnect();
+    }
+    
+    
 }

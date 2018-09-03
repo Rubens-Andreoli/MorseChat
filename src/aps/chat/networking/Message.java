@@ -43,18 +43,6 @@ public class Message implements Serializable{
 	hour = cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE)+":"+cal.get(Calendar.SECOND);
     }
 
-    public String getHour() {
-	return hour;
-    }
-
-    public String getUser() {
-	return user;
-    }
-
-    public String getText() {
-	return text;
-    }
-
     public void encode() {
 	if(isMorse || text == null) return;
 	StringBuilder encoded = new StringBuilder("");
@@ -86,7 +74,7 @@ public class Message implements Serializable{
 	isMorse = false;
     }
     
-    public void play(Track track) {
+    public void createSound(Track track) {
 	if(!isMorse || text == null) return;
 	track.add(makeEvent(ShortMessage.PROGRAM_CHANGE,1,80,0,0));
 	int tick = 2;
@@ -112,10 +100,6 @@ public class Message implements Serializable{
 	    }
 	}
     }
-
-    public boolean isMorse() {
-	return isMorse;
-    }
     
     private MidiEvent makeEvent(int command, int chan, int note, int volume, int tick){
 	MidiEvent event = null;
@@ -126,5 +110,10 @@ public class Message implements Serializable{
 	} catch (InvalidMidiDataException ex) {}
 	return event;
     }
+
+    public String getHour() {return hour;}
+    public String getUser() {return user;}
+    public String getText() {return text;}
+    public boolean isMorse() {return isMorse;}
 
 }
