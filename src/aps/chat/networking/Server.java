@@ -10,6 +10,8 @@ import java.util.List;
 
 public class Server implements Runnable{
 
+    public static final String SERVER_ID = "SERVER";
+    
     private final int port;
     private ServerSocket ss;
     private Socket s;
@@ -52,7 +54,7 @@ public class Server implements Runnable{
 		out = new ObjectOutputStream(s.getOutputStream());
 		in = new ObjectInputStream(s.getInputStream());
 	    } catch (IOException ex) {
-		//ERRO: Input/Output Stream não inicializado(s).
+		//ERRO: Input/OutputStream não inicializada(s).
 	    }
 	}
 	
@@ -62,10 +64,16 @@ public class Server implements Runnable{
 	    try {
 		while ((msg = (Message)in.readObject()) != null){
 		    if(msg.getText() == null) {
-			if(!clients.contains(out)) clients.add(out); //connect
-			else clients.remove(out); //disconnect
+			if(!clients.contains(out)){
+			    clients.add(out);
+			    send(new Message(SERVER_ID, msg.getUser()+" entrou na sala."));
+			}else{
+			    clients.remove(out);
+			    send(new Message(SERVER_ID, msg.getUser()+" saiu da sala."));
+			} 
+		    }else{
+			send(msg);
 		    }
-		    send(msg);
 		}
 	    } catch (IOException ex) {
 		//ERRO: Não foi possível accessar a input stream do cliente.

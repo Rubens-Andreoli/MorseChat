@@ -170,15 +170,15 @@ public class LoginFrame extends javax.swing.JFrame {
         if(chbIsServer.isSelected()){
 	    new Thread(new Server(Integer.parseInt(txtPort.getText()))).start();
 	    new ChatFrame(this, new Client(
+		    txtName.getText(),
 		    "localhost", 
-		    Integer.parseInt(txtPort.getText())),
-		    txtName.getText()
+		    Integer.parseInt(txtPort.getText())) 
 	    );
 	}else{
 	    new ChatFrame(this, new Client(
-		    txtIP.getText(), 
-		    Integer.parseInt(txtPort.getText())),
-		    txtName.getText()
+		    txtName.getText(), 
+		    txtIP.getText(),
+		    Integer.parseInt(txtPort.getText()))
 	    );
 	}
 	this.dispose();

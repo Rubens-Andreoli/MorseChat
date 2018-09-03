@@ -2,7 +2,6 @@ package aps.chat.ui;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 
 public class MorseDialog extends javax.swing.JDialog {
 
@@ -13,7 +12,8 @@ public class MorseDialog extends javax.swing.JDialog {
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Morse Guide");
+        setTitle("Morse");
+        setResizable(false);
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/aps/chat/ui/img/morse.png"))); // NOI18N
 
@@ -21,16 +21,17 @@ public class MorseDialog extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 341, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 464, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
@@ -44,13 +45,12 @@ public class MorseDialog extends javax.swing.JDialog {
     
     private void config(ChatFrame parent) {
 	this.setLocationRelativeTo(parent);
-	WindowListener exitListener = new WindowAdapter() {
+	this.addWindowListener(new WindowAdapter() {
 	    @Override
 	    public void windowClosing(WindowEvent e) {
-		parent.setMorseGuide(false);
+		parent.resetMorseGuide();
 	    }
-	};
-	this.addWindowListener(exitListener);
+	});
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
